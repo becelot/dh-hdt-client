@@ -12,9 +12,12 @@ namespace DeckHistoryPlugin.Api
 
         private const string DefaultUserLoginUrl = Base + "/auth/login";
         private const string DefaultDeckUploadUrl = Base + "/deck/upload";
+        private const string DefaultTwitchLinkUrl = Base + "/auth/twitch_session";
 
         public string UserLoginUrl { get; set; } = DefaultUserLoginUrl;
 
         public string DeckUploadUrl { get; set; } = DefaultDeckUploadUrl;
+
+        public string TwitchLinkUrl { get; set; } = DefaultTwitchLinkUrl;
     }
 }

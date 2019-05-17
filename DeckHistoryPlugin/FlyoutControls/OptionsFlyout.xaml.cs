@@ -1,6 +1,8 @@
 ﻿using DeckHistoryPlugin.Api;
+using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.Annotations;
 using Hearthstone_Deck_Tracker.Utility;
+using Hearthstone_Deck_Tracker.Utility.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -148,9 +150,21 @@ namespace DeckHistoryPlugin.FlyoutControls
 
         public ICommand LogoutCommand => new Command(() => ApiWrapper.Logout());
 
-        public ICommand LinkTwitchCommand => new Command(() =>
+        public ICommand LinkTwitchCommand => new Command(async () =>
         {
 
+            string authUrl;
+            try
+            {
+                authUrl = await ApiWrapper.GetAuthenticationUrl();
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                return;
+            }
+
+            Helper.TryOpenUrl(authUrl);
         });
         #endregion
 

@@ -87,5 +87,37 @@ namespace DeckHistoryPlugin.Api
 
             return response.Status == 200;
         }
+
+        public static async Task<string> GetAuthenticationUrl()
+        {
+            if (!Account.Instance.IsAuthenticated)
+            {
+                throw new Exception("User is not authenticated yet");
+            }
+
+            TwitchLinkResponse response;
+            try
+            {
+                response = await Client.PostTwitchLink(
+                    new Request.TwitchLinkRequest
+                    {
+                        UserName = Account.Instance.Username,
+                        Token = Account.Instance.UploadToken
+                    }
+                );
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Webrequest to obtain twich authorization link failed");
+            }
+
+            if (response.Status != 200)
+            {
+                throw new Exception(response.Message);
+            }
+
+            return response.AuthUrl;
+        }
     }
 }
