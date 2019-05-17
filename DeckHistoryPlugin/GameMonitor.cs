@@ -76,6 +76,13 @@ namespace DeckHistoryPlugin
         internal void OnGameEnd()
         {
             string deckCode = GenerateDeckCode();
+
+            if (!deckCode.Equals(Config.Instance.LastDeckcodeUploaded))
+            {
+                Config.Instance.LastDeckcodeUploaded = deckCode;
+                Config.Save();
+            }
+
         }
     }
 }
