@@ -77,12 +77,15 @@ namespace DeckHistoryPlugin
         {
             string deckCode = GenerateDeckCode();
 
-            if (!deckCode.Equals(Config.Instance.LastDeckcodeUploaded))
+            // if deckcode equals the previously played one, then return
+            if (deckCode.Equals(Config.Instance.LastDeckcodeUploaded))
             {
-                Config.Instance.LastDeckcodeUploaded = deckCode;
-                Config.Save();
+                return;
             }
 
+            // otherwise, we need to upload the new decklist to the backend
+            Config.Instance.LastDeckcodeUploaded = deckCode;
+            Config.Save();
         }
     }
 }
