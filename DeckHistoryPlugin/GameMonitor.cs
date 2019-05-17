@@ -1,4 +1,5 @@
-﻿using HearthDb.Deckstrings;
+﻿using DeckHistoryPlugin.Api;
+using HearthDb.Deckstrings;
 using HearthDb.Enums;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using System;
@@ -84,8 +85,15 @@ namespace DeckHistoryPlugin
             }
 
             // otherwise, we need to upload the new decklist to the backend
-            Config.Instance.LastDeckcodeUploaded = deckCode;
-            Config.Save();
+            var uploadTask = Task.Run<bool>(async () => await ApiWrapper.UploadDeck(Hearthstone_Deck_Tracker.API.Core.Game.CurrentSelectedDeck.Name, deckCode));
+            uploadTask.Wait();
+
+            // and remember the uploaded deck, if the upload was successfull
+            if (uploadTask.Result)
+            {
+                Config.Instance.LastDeckcodeUploaded = deckCode;
+                Config.Save();
+            }
         }
     }
 }
