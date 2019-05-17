@@ -63,7 +63,10 @@
     <Compile Include="Api\ClientConfig.cs" />
     <Compile Include="Api\DeckHistoryClient.cs" />
     <Compile Include="Api\Request\LoginRequest.cs" />
+    <Compile Include="Api\Request\UploadDeckRequest.cs" />
     <Compile Include="Api\Response\LoginResponse.cs" />
+    <Compile Include="Api\Response\Response.cs" />
+    <Compile Include="Api\Response\UploadDeckResponse.cs" />
     <Compile Include="Api\WebClient.cs" />
     <Compile Include="Api\Web\ContentType.cs" />
     <Compile Include="Api\Web\Header.cs" />
