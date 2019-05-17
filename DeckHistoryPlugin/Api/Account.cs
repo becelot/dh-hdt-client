@@ -38,9 +38,6 @@ namespace DeckHistoryPlugin.Api
 
         public String Username { get; set; }
 
-
-        private bool _isAuthenticated = false;
-
         [JsonIgnore]
         public bool IsAuthenticated
         {
@@ -66,6 +63,8 @@ namespace DeckHistoryPlugin.Api
                 OnPropertyChanged(nameof(IsAuthenticated));
             }
         }
+
+        public String TwitchId { get; set; }
 
         public bool Logout()
         {

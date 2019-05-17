@@ -15,5 +15,8 @@ namespace DeckHistoryPlugin.Api.Response
 
         [JsonProperty("username")]
         public string Username { get; set; }
+
+        [JsonProperty("twitch_id")]
+        public string TwitchId { get; set; }
     }
 }

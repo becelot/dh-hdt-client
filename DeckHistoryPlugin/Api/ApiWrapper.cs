@@ -44,6 +44,7 @@ namespace DeckHistoryPlugin.Api
 
             Account.Instance.Username = response.Username;
             Account.Instance.UploadToken = response.UploadToken;
+            Account.Instance.TwitchId = response.TwitchId;
             Account.Save();
 
             LoggedIn?.Invoke();
