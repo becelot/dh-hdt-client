@@ -1,4 +1,5 @@
-﻿using Hearthstone_Deck_Tracker.Plugins;
+﻿using Hearthstone_Deck_Tracker.API;
+using Hearthstone_Deck_Tracker.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace DeckHistoryPlugin
 {
     public class DeckHistoryPlugin : IPlugin
     {
+        private GameMonitor gameMonitor = new GameMonitor();
+
         public string Name => "Deck History";
 
         public string Description => "A plugin that tracks and uploads your played decks history. Connects to the Twitch extension to display recently played decks to your viewer!";
@@ -38,7 +41,7 @@ namespace DeckHistoryPlugin
 
         public void OnLoad()
         {
-
+            GameEvents.OnGameEnd.Add(this.gameMonitor.OnGameEnd);
         }
 
         public void OnUnload()
