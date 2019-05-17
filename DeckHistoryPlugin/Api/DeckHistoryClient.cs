@@ -29,5 +29,14 @@ namespace DeckHistoryPlugin.Api
             using (var reader = new StreamReader(responseStream))
                 return JsonConvert.DeserializeObject<LoginResponse>(reader.ReadToEnd());
         }
+
+        public async Task<UploadDeckResponse> PostUploadDeck(UploadDeckRequest deckData)
+        {
+            var data = JsonConvert.SerializeObject(deckData);
+            using (var response = await _webClient.PostJsonAsync(_config.DeckUploadUrl, data, false))
+            using (var responseStream = response.GetResponseStream())
+            using (var reader = new StreamReader(responseStream))
+                return JsonConvert.DeserializeObject<UploadDeckResponse>(reader.ReadToEnd());
+        }
     }
 }

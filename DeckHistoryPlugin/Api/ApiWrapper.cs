@@ -58,5 +58,33 @@ namespace DeckHistoryPlugin.Api
                 LoggedOut?.Invoke();
             return res;
         }
+
+        public static async Task<bool> UploadDeck(string deckName, string deckCode)
+        {
+            if (!Account.Instance.IsAuthenticated)
+            {
+                return false;
+            }
+
+            UploadDeckResponse response;
+            try
+            {
+                response = await Client.PostUploadDeck(
+                    new Request.UploadDeckRequest
+                    {
+                        DeckName = deckName,
+                        DeckCode = deckCode,
+                        ClientKey = Account.Instance.UploadToken
+                    }
+                );
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Webrequest to obtain login authorization failed");
+            }
+
+            return response.Status == 200;
+        }
     }
 }

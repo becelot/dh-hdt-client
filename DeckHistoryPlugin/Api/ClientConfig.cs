@@ -11,7 +11,10 @@ namespace DeckHistoryPlugin.Api
         private const string Base = "http://localhost:5000/api";
 
         private const string DefaultUserLoginUrl = Base + "/auth/login";
+        private const string DefaultDeckUploadUrl = Base + "/deck/upload";
 
         public string UserLoginUrl { get; set; } = DefaultUserLoginUrl;
+
+        public string DeckUploadUrl { get; set; } = DefaultDeckUploadUrl;
     }
 }
