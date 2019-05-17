@@ -80,4 +80,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)$(TargetFileName)" "%25appdata%25\HearthstoneDeckTracker\Plugins\$(TargetFileName)"
+start "HDT" "%25localappdata%25\HearthstoneDeckTracker\HearthstoneDeckTracker.exe"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>taskkill /f /fi "pid gt 0" /im HearthstoneDeckTracker.exe</PreBuildEvent>
+  </PropertyGroup>
 </Project>
