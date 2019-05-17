@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,6 +46,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,11 +56,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="DeckHistoryPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hearthstone-Deck-Tracker\HearthDb\HearthDb\HearthDb.csproj">
+      <Project>{7ed14243-e02b-4b94-af00-a67a62c282f0}</Project>
+      <Name>HearthDb</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Hearthstone-Deck-Tracker\HearthMirror\HearthMirror\HearthMirror.csproj">
+      <Project>{1694a2f8-645a-4263-a6ab-fc26323fd675}</Project>
+      <Name>HearthMirror</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Hearthstone-Deck-Tracker\Hearthstone Deck Tracker\Hearthstone Deck Tracker.csproj">
+      <Project>{e63a3f1c-e662-4e62-be43-af27cb9e953d}</Project>
+      <Name>Hearthstone Deck Tracker</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
