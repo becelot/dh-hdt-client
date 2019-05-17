@@ -4,10 +4,101 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DeckHistoryPlugin.FlyoutControls"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:converters="clr-namespace:Hearthstone_Deck_Tracker.Utility.Converters;assembly=HearthstoneDeckTracker"
              mc:Ignorable="d"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="600" d:DesignWidth="600">
-    <Grid>
-            
-    </Grid>
+    <UserControl.Resources>
+        <converters:InverseBoolToVisibilityConverter x:Key="InverseVisibility" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+    <DockPanel>
+        <StackPanel Margin="20">
+            <StackPanel Visibility="{Binding IsAuthenticated, Converter={StaticResource InverseVisibility}}">
+                <TextBlock Margin="10" TextAlignment="Center" FontSize="16" FontWeight="Bold" TextWrapping="Wrap">
+                    <Run Text="The Deck History plugin requires authorization to connect to your Twitch channel."></Run>
+                    <LineBreak></LineBreak><LineBreak></LineBreak>
+                    <Run Text="Please login using the form below!"></Run>
+                </TextBlock>
+                <GroupBox Header="Login Information">
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Username" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
+                            <TextBox Grid.Column="1" Margin="20,0,40,0" x:Name="Username">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding LoginCommand}" Key="Return" />
+                                    <KeyBinding Command="{Binding LoginCommand}" Key="Enter" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Password" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
+                            <PasswordBox Grid.Column="1" Margin="20,0,40,0" x:Name="Password">
+                                <PasswordBox.InputBindings>
+                                    <KeyBinding Command="{Binding LoginCommand}" Key="Return" />
+                                    <KeyBinding Command="{Binding LoginCommand}" Key="Enter" />
+                                </PasswordBox.InputBindings>
+                            </PasswordBox>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock Text="{Binding LoginHint}"
+                                   Visibility="{Binding ShowLoginHint, Converter={StaticResource BoolToVisibility}}"
+                                   Margin="0,10,40,-15"
+                                   TextAlignment="Right"
+                                   Foreground="Red"
+                                   FontStyle="Italic"/>
+                            <StackPanel Margin="0,10,40,-15" Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsAuthenticating, Converter={StaticResource BoolToVisibility}}">
+                                <controls:ProgressRing IsActive="True" Width="8" Height="8"></controls:ProgressRing>
+                                <TextBlock Text="Authenticating..."
+                                   TextAlignment="Right"
+                                   FontStyle="Italic"
+                                   Foreground="Green"
+                                   Margin="20,0,0,0"/>
+                            </StackPanel>
+
+                        </Grid>
+
+
+                        <Button Grid.Column="1" Margin="0,25,40,0" HorizontalAlignment="Right" Width="90" Content="Login" Command="{Binding LoginCommand}">
+                            <Button.Background>
+                                <SolidColorBrush Color="Green" Opacity="0.5"/>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <StackPanel Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock FontSize="16" TextAlignment="Center">
+                    <Run Text="The extension is linked to your Twitch account"></Run>
+                </TextBlock>
+                <GroupBox Header="Account Information">
+                    <StackPanel Margin="20">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="50*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Logged in as" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
+                            <TextBlock Text="{Binding LoggedInUser}" Grid.Column="1" Margin="20,0,0,0" Foreground="Green"></TextBlock>
+                        </Grid>
+                        <Button Grid.Column="1" Margin="0,25,40,0" HorizontalAlignment="Right" Width="90" Content="Logout" Command="{Binding LogoutCommand}">
+                            <Button.Background>
+                                <SolidColorBrush Color="Red" Opacity="0.5"/>
+                            </Button.Background>
+                        </Button>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
 </UserControl>
