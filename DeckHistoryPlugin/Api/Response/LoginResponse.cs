@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace DeckHistoryPlugin.Api.Response
 {
-    public class LoginResponse
+    public class LoginResponse : Response
     {
-        [JsonProperty("status")]
-        public int Status { get; set; }
-
-        [JsonProperty("message")]
-        public string Message { get; set; }
 
         [JsonProperty("api_key")]
         public string UploadToken { get; set; }
