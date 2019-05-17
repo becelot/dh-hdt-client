@@ -49,6 +49,10 @@ namespace DeckHistoryPlugin.FlyoutControls
 
         public string LoggedInUser => Account.Instance.Username;
 
+        public bool IsTwitchLinked => !String.IsNullOrEmpty(Account.Instance.TwitchId);
+
+        public string TwitchAccount => Account.Instance.TwitchId;
+
         public bool ShowLoginHint
         {
             get
@@ -143,6 +147,11 @@ namespace DeckHistoryPlugin.FlyoutControls
         });
 
         public ICommand LogoutCommand => new Command(() => ApiWrapper.Logout());
+
+        public ICommand LinkTwitchCommand => new Command(() =>
+        {
+
+        });
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;

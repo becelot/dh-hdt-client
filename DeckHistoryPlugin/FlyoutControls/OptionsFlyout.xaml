@@ -78,18 +78,43 @@
                 </GroupBox>
             </StackPanel>
             <StackPanel Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock FontSize="16" TextAlignment="Center">
-                    <Run Text="The extension is linked to your Twitch account"></Run>
+                <TextBlock FontSize="16" FontWeight="Bold" TextAlignment="Center" Margin="10">
+                    <Run Text="The extension is linked to your DeckHistory account"></Run>
                 </TextBlock>
                 <GroupBox Header="Account Information">
                     <StackPanel Margin="20">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50*"/>
-                                <ColumnDefinition Width="50*"/>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="70*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Logged in as" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
-                            <TextBlock Text="{Binding LoggedInUser}" Grid.Column="1" Margin="20,0,0,0" Foreground="Green"></TextBlock>
+                            <TextBlock FontSize="14" Text="Logged in as" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
+                            <TextBlock FontSize="14" Text="{Binding LoggedInUser}" Grid.Column="1" Foreground="Green"></TextBlock>
+                        </Grid>
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30*"/>
+                                <ColumnDefinition Width="70*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontSize="14" Text="Twitch Account" Grid.Column="0" Margin="20,0,0,0"></TextBlock>
+                            <TextBlock FontSize="14" Grid.Column="1" Foreground="Green" Visibility="{Binding IsTwitchLinked, Converter={StaticResource BoolToVisibility}}">
+                                <Run Text="Linked with " />
+                                <Run Text="{Binding TwitchId, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock FontSize="14" Grid.Column="1" Foreground="Red" Visibility="{Binding IsTwitchLinked, Converter={StaticResource InverseVisibility}}">
+                                <Run Text="Not linked" />
+                                <Run Text="{Binding TwitchId, Mode=OneWay}" />
+                            </TextBlock>
+                            <Button Margin="0,0,40,0"
+                                    Content="Connect Twitch"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Width="120"
+                                    Command="{Binding LinkTwitchCommand}">
+                                <Button.Background>
+                                    <SolidColorBrush Color="Purple"></SolidColorBrush>
+                                </Button.Background>
+                            </Button>
                         </Grid>
                         <Button Grid.Column="1" Margin="0,25,40,0" HorizontalAlignment="Right" Width="90" Content="Logout" Command="{Binding LogoutCommand}">
                             <Button.Background>
