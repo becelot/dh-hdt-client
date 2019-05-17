@@ -95,24 +95,41 @@ namespace DeckHistoryPlugin.FlyoutControls
         #endregion
 
         #region Events
+
+        /// <summary>
+        /// Try to login with the provided credentials
+        /// </summary>
         public ICommand LoginCommand => new Command(async () =>
         {
+            // verfiy username
             var username = Username.Text;
-
             if (String.IsNullOrEmpty(username))
             {
                 return;
             }
 
+            // verify password
             var password = Password.Password;
-
             if (String.IsNullOrEmpty(password))
             {
                 return;
             }
 
             IsAuthenticating = true;
-            var result = await ApiWrapper.Login(username, password);
+
+            // Try to login with provided credentials
+            string result = "";
+            try
+            {
+                result = await ApiWrapper.Login(username, password);
+            }
+            catch (Exception)
+            {
+                // A backend error occured
+                result = "Could not connect to DeckHistory server.";
+            }
+
+            // Show hints
             IsAuthenticating = false;
             LoginHint = result;
             ShowLoginHint = true;
