@@ -58,6 +58,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Account.cs" />
+    <Compile Include="Api\ApiWrapper.cs" />
+    <Compile Include="Api\ClientConfig.cs" />
+    <Compile Include="Api\DeckHistoryClient.cs" />
+    <Compile Include="Api\Request\LoginRequest.cs" />
+    <Compile Include="Api\Response\LoginResponse.cs" />
+    <Compile Include="Api\WebClient.cs" />
+    <Compile Include="Api\Web\ContentType.cs" />
+    <Compile Include="Api\Web\Header.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DeckHistoryPlugin.cs" />
     <Compile Include="FlyoutControls\OptionsFlyout.xaml.cs">
@@ -92,6 +101,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetFileName)" "%25appdata%25\HearthstoneDeckTracker\Plugins\$(TargetFileName)"
