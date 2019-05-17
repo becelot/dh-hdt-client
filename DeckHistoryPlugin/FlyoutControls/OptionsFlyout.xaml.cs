@@ -101,10 +101,15 @@ namespace DeckHistoryPlugin.FlyoutControls
         /// </summary>
         public ICommand LoginCommand => new Command(async () =>
         {
+            LoginHint = "";
+            ShowLoginHint = false;
+
             // verfiy username
             var username = Username.Text;
             if (String.IsNullOrEmpty(username))
             {
+                LoginHint = "Username is required";
+                ShowLoginHint = true;
                 return;
             }
 
@@ -112,6 +117,8 @@ namespace DeckHistoryPlugin.FlyoutControls
             var password = Password.Password;
             if (String.IsNullOrEmpty(password))
             {
+                LoginHint = "Password is required";
+                ShowLoginHint = true;
                 return;
             }
 
