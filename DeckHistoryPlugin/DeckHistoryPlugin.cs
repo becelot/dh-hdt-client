@@ -20,7 +20,15 @@ namespace DeckHistoryPlugin
 
         public Version Version => new Version(0, 0, 1);
 
-        public MenuItem MenuItem => null;
+        public MenuItem MenuItem
+        {
+            get
+            {
+                MenuItem item = new MenuItem();
+                item.Header = "Deck History";
+                return item;
+            }
+        }
 
 
         public void OnButtonPress()
