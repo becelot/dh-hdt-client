@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HearthDeck = HearthDb.Deckstrings.Deck;
+using MirrorDeck = HearthMirror.Objects.Deck;
+using TrackerDeck = Hearthstone_Deck_Tracker.Hearthstone.Deck;
 
 namespace DeckHistoryPlugin
 {
@@ -59,42 +61,19 @@ namespace DeckHistoryPlugin
         }
 
         /// <summary>
-        /// Generates a new deck instance from the current context
+        /// Import the deck from the tracked decklist
         /// </summary>
-        /// <returns></returns>
-        public static Deck FromContext()
+        /// <param name="selectedDeck">The deck that is currently selected</param>
+        /// <returns>An instance of a deck that can be serialized</returns>
+        private static Deck FromTracker(TrackerDeck selectedDeck)
         {
             Deck result = new Deck();
-
-            // Retrieve the currently played deck
-            var game = Hearthstone_Deck_Tracker.API.Core.Game;
-            var selectedDeck = game.CurrentSelectedDeck;
-            var activeDeck = DeckList.Instance.ActiveDeckVersion;
-
-            // if neither source is in a valid state, quit
-            if (selectedDeck == null && activeDeck == null)
-            {
-                throw new Exception("Used deck could not be detected");
-            }
-
-            // Convert the deck to dbf_id format
             try
             {
-                // if a deck was recorded
-                if (selectedDeck != null)
+                // convert cards in selected deck to (dbfid, count) format
+                foreach (var card in selectedDeck.Cards)
                 {
-                    selectedDeck.Cards.ForEach(card =>
-                    {
-                        result.CardDbfIds.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
-                    });
-                }
-                else
-                {
-                    // try to fallback to active deck if selected deck was not detected by HearthMirror
-                    foreach (var card in activeDeck.Cards)
-                    {
-                        result.CardDbfIds.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
-                    }
+                    result.CardDbfIds.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
                 }
             }
             catch (Exception exc)
@@ -107,14 +86,7 @@ namespace DeckHistoryPlugin
             try
             {
                 // Extract hero from mirror
-                if (selectedDeck != null)
-                {
-                    result.HeroDbfId = HearthDb.Cards.All[selectedDeck.Hero].DbfId;
-                }
-                else
-                {
-                    result.HeroDbfId = MapClassNameToHero(activeDeck.Class);
-                }
+                result.HeroDbfId = MapClassNameToHero(selectedDeck.Class);
             }
             catch (Exception e)
             {
@@ -126,14 +98,7 @@ namespace DeckHistoryPlugin
             try
             {
                 // Extract hero from mirror
-                if (selectedDeck != null)
-                {
-                    result.Name = selectedDeck.Name;
-                }
-                else
-                {
-                    result.Name = activeDeck.Name;
-                }
+                result.Name = selectedDeck.Name;
             }
             catch (Exception e)
             {
@@ -143,14 +108,7 @@ namespace DeckHistoryPlugin
 
             try
             {
-                if (selectedDeck != null)
-                {
-                    result.Format = selectedDeck.IsWild ? HearthDb.Enums.FormatType.FT_WILD : HearthDb.Enums.FormatType.FT_STANDARD;
-                }
-                else
-                {
-                    result.Format = activeDeck.IsWildDeck ? HearthDb.Enums.FormatType.FT_WILD : HearthDb.Enums.FormatType.FT_STANDARD;
-                }
+                result.Format = selectedDeck.IsWildDeck ? HearthDb.Enums.FormatType.FT_WILD : HearthDb.Enums.FormatType.FT_STANDARD;
             }
             catch (Exception e)
             {
@@ -159,6 +117,90 @@ namespace DeckHistoryPlugin
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Import the deck from a HearthMirror deck
+        /// </summary>
+        /// <param name="selectedDeck">The selected deck detected by HearthMirror</param>
+        /// <returns>An instance of a deck that can be serialized</returns>
+        private static Deck FromMirror(MirrorDeck selectedDeck)
+        {
+            Deck result = new Deck();
+            try
+            {
+                // convert cards in selected deck to (dbfid, count) format
+                selectedDeck.Cards.ForEach(card =>
+                {
+                    result.CardDbfIds.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
+                });
+            }
+            catch (Exception exc)
+            {
+                Log.Error(exc);
+                throw new Exception("Exception while parsing the currently played deck");
+            }
+
+            // Extract the hero
+            try
+            {
+                // Extract hero from mirror
+                result.HeroDbfId = HearthDb.Cards.All[selectedDeck.Hero].DbfId;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Could not parse the used hero");
+            }
+
+            // Extract deck name
+            try
+            {
+                // Extract hero from mirror
+                result.Name = selectedDeck.Name;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Could not parse the name of the deck");
+            }
+
+            try
+            {
+                result.Format = selectedDeck.IsWild ? HearthDb.Enums.FormatType.FT_WILD : HearthDb.Enums.FormatType.FT_STANDARD;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Could not parse deck format");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Generates a new deck instance from the current context
+        /// </summary>
+        /// <returns></returns>
+        public static Deck FromContext()
+        {
+            Deck result = new Deck();
+
+            // Retrieve the currently played deck
+            var game = Hearthstone_Deck_Tracker.API.Core.Game;
+            var selectedDeck = game.CurrentSelectedDeck;
+            var activeDeck = DeckList.Instance.ActiveDeckVersion;
+
+            if (selectedDeck != null)
+            {
+                return FromMirror(selectedDeck);
+            } else if (activeDeck != null)
+            {
+                return FromTracker(activeDeck);
+            }
+
+            // if neither source is in a valid state, quit
+            throw new Exception("Used deck could not be detected");
         }
     }
 }
