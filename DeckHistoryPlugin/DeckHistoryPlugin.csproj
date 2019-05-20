@@ -73,6 +73,7 @@
     <Compile Include="Api\Web\ContentType.cs" />
     <Compile Include="Api\Web\Header.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Deck.cs" />
     <Compile Include="DeckHistoryPlugin.cs" />
     <Compile Include="FlyoutControls\OptionsFlyout.xaml.cs">
       <DependentUpon>OptionsFlyout.xaml</DependentUpon>
