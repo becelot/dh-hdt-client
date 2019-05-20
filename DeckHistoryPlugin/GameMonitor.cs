@@ -1,6 +1,7 @@
 ﻿using DeckHistoryPlugin.Api;
 using HearthDb.Deckstrings;
 using HearthDb.Enums;
+using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,24 @@ namespace DeckHistoryPlugin
 {
     public class GameMonitor
     {
+
+        private int MapClassNameToHero(string className)
+        {
+            switch(className)
+            {
+                case "Mage": return 637;
+                case "Hunter": return 31;
+                case "Warrior": return 7;
+                case "Shaman": return 1066;
+                case "Druid": return 274;
+                case "Rogue": return 930;
+                case "Paladin": return 671;
+                case "Warlock": return 893;
+                case "Priest": return 813;
+                default: return 0;
+            }
+        }
+
         /// <summary>
         /// Generates a deckcode for the deck that was last played during the game
         /// </summary>
@@ -21,15 +40,32 @@ namespace DeckHistoryPlugin
             // Retrieve the currently played deck
             var game = Hearthstone_Deck_Tracker.API.Core.Game;
             var selectedDeck = game.CurrentSelectedDeck;
+            var activeDeck = DeckList.Instance.ActiveDeckVersion;
 
             // Convert the deck to dbf_id format
             Dictionary<int, int> card_dbf = new Dictionary<int, int>();
             try
             {
-                selectedDeck.Cards.ForEach(card =>
+                // if a deck was recorded
+                if (selectedDeck != null)
                 {
-                    card_dbf.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
-                });
+                    selectedDeck.Cards.ForEach(card =>
+                    {
+                        card_dbf.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
+                    });
+                }
+                else if (activeDeck != null)
+                {
+                    // try to fallback to active deck if selected deck was not detected by HearthMirror
+                    foreach (var card in activeDeck.Cards)
+                    {
+                        card_dbf.Add(HearthDb.Cards.All[card.Id].DbfId, card.Count);
+                    }
+                } else
+                {
+                    // otherwise, we cannot process the deck
+                    throw new Exception();
+                }
             }
             catch (Exception exc)
             {
@@ -43,7 +79,7 @@ namespace DeckHistoryPlugin
             {
                 deck = new Deck
                 {
-                    HeroDbfId = HearthDb.Cards.All[game.CurrentSelectedDeck.Hero].DbfId,
+                    HeroDbfId = selectedDeck != null ? HearthDb.Cards.All[selectedDeck.Hero].DbfId : MapClassNameToHero(activeDeck.Class),
                     CardDbfIds = card_dbf,
                     Format = (FormatType)game.CurrentFormat
                 };
@@ -85,7 +121,7 @@ namespace DeckHistoryPlugin
             }
 
             // otherwise, we need to upload the new decklist to the backend
-            var uploadTask = Task.Run<bool>(async () => await ApiWrapper.UploadDeck(Hearthstone_Deck_Tracker.API.Core.Game.CurrentSelectedDeck.Name, deckCode));
+            var uploadTask = Task.Run<bool>(async () => await ApiWrapper.UploadDeck(Hearthstone_Deck_Tracker.API.Core.Game.CurrentSelectedDeck != null ? Hearthstone_Deck_Tracker.API.Core.Game.CurrentSelectedDeck.Name : DeckList.Instance.ActiveDeckVersion.Name, deckCode));
             uploadTask.Wait();
 
             // and remember the uploaded deck, if the upload was successfull
