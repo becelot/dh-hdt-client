@@ -68,6 +68,13 @@ namespace DeckHistoryPlugin
         private static Deck FromTracker(TrackerDeck selectedDeck)
         {
             Deck result = new Deck();
+
+            // detect if an instance was provided
+            if (selectedDeck == null)
+            {
+                throw new ArgumentException("No deck was provided");
+            }
+
             try
             {
                 // convert cards in selected deck to (dbfid, count) format
@@ -127,6 +134,13 @@ namespace DeckHistoryPlugin
         private static Deck FromMirror(MirrorDeck selectedDeck)
         {
             Deck result = new Deck();
+
+            // detect if an instance was provided
+            if (selectedDeck == null)
+            {
+                throw new ArgumentException("No deck was provided");
+            }
+
             try
             {
                 // convert cards in selected deck to (dbfid, count) format
@@ -191,13 +205,11 @@ namespace DeckHistoryPlugin
             var selectedDeck = game.CurrentSelectedDeck;
             var activeDeck = DeckList.Instance.ActiveDeckVersion;
 
-            if (selectedDeck != null)
-            {
-                return FromMirror(selectedDeck);
-            } else if (activeDeck != null)
-            {
-                return FromTracker(activeDeck);
-            }
+            // Try to import from mirror first, as it provides more information
+            try { return FromMirror(selectedDeck); } catch (Exception) { }
+
+            // Fallback to tracker, if the mirror instance was not parseable
+            try { return FromTracker(activeDeck); } catch (Exception) { }
 
             // if neither source is in a valid state, quit
             throw new Exception("Used deck could not be detected");
