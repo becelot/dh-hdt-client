@@ -1,4 +1,5 @@
 ﻿using DeckHistoryPlugin.Api.Response;
+using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Utility.Logging;
 using System;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace DeckHistoryPlugin.Api
             return res;
         }
 
-        public static async Task<bool> UploadDeck(string deckName, string deckCode)
+        public static async Task<bool> UploadDeck(string deckName, string deckCode, bool uploadGameResult = true)
         {
             if (!Account.Instance.IsAuthenticated)
             {
@@ -78,6 +79,50 @@ namespace DeckHistoryPlugin.Api
                         ClientKey = Account.Instance.UploadToken
                     }
                 );
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                throw new Exception("Webrequest to obtain login authorization failed");
+            }
+
+            return response.Status == 200;
+        }
+
+
+        public static async Task<bool> UploadDeckWithResult(
+            string deckName,
+            string deckCode,
+            string opponentName,
+            string opponentDeck,
+            string time,
+            GameResult result
+            )
+        {
+            if (!Account.Instance.IsAuthenticated)
+            {
+                return false;
+            }
+
+            UploadDeckResponse response;
+            try
+            {
+                response = await Client.PostUploadDeck(
+                    new Request.UploadDeckRequest
+                    {
+                        DeckName = deckName,
+                        DeckCode = deckCode,
+                        ClientKey = Account.Instance.UploadToken,
+                        Game = new Request.UploadGameRequest
+                        {
+                            OpponentName = opponentName,
+                            OpponentDeck = opponentDeck,
+                            Time = time,
+                            Result = (int)result
+                        }
+                    }
+                );
+
             }
             catch (Exception e)
             {
