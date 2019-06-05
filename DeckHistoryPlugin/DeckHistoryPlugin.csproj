@@ -65,6 +65,7 @@
     <Compile Include="Api\Request\LoginRequest.cs" />
     <Compile Include="Api\Request\TwitchLinkRequest.cs" />
     <Compile Include="Api\Request\UploadDeckRequest.cs" />
+    <Compile Include="Api\Request\UploadGameRequest.cs" />
     <Compile Include="Api\Response\LoginResponse.cs" />
     <Compile Include="Api\Response\Response.cs" />
     <Compile Include="Api\Response\TwitchLinkResponse.cs" />
