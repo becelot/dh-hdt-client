@@ -17,5 +17,8 @@ namespace DeckHistoryPlugin.Api.Request
 
         [JsonProperty("client_key")]
         public string ClientKey { get; set; }
+
+        [JsonProperty("game")]
+        public UploadGameRequest Game { get; set; }
     }
 }
