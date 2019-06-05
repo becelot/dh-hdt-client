@@ -1,4 +1,5 @@
 ﻿using DeckHistoryPlugin.Api;
+using DeckHistoryPlugin.Api.Request;
 using HearthDb.Deckstrings;
 using HearthDb.Enums;
 using Hearthstone_Deck_Tracker;
@@ -26,12 +27,24 @@ namespace DeckHistoryPlugin
                 string deckCode = deck.GenerateDeckCode();
 
                 // if deckcode equals the previously played one, then return
+                /*
                 if (deckCode.Equals(Config.Instance.LastDeckcodeUploaded))
                 {
                     return;
-                }
+                }*/
 
-                var uploadTask = Task.Run<bool>(async () => await ApiWrapper.UploadDeck(deck.Name, deckCode));
+                var stats = Hearthstone_Deck_Tracker.Core.Game.CurrentGameStats;
+
+                var uploadTask = Task.Run<bool>(async () => 
+                    await ApiWrapper.UploadDeckWithResult(
+                        deck.Name,
+                        deckCode,
+                        stats.OpponentName,
+                        "",
+                        stats.EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
+                        stats.Result
+                    )
+                );
                 uploadTask.Wait();
 
                 // and remember the uploaded deck, if the upload was successfull
