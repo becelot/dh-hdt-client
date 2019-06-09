@@ -34,13 +34,23 @@ namespace DeckHistoryPlugin
                 }*/
 
                 var stats = Hearthstone_Deck_Tracker.Core.Game.CurrentGameStats;
+                string opponentDeck = "";
+
+                try
+                {
+                    opponentDeck = Deck.FromOpponent(deck.Format).GenerateDeckCode();
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
 
                 var uploadTask = Task.Run<bool>(async () => 
                     await ApiWrapper.UploadDeckWithResult(
                         deck.Name,
                         deckCode,
                         stats.OpponentName,
-                        "",
+                        opponentDeck,
                         stats.EndTime.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz"),
                         stats.Result
                     )

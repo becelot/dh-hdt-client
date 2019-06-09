@@ -1,4 +1,5 @@
 ﻿using HearthDb.Deckstrings;
+using HearthDb.Enums;
 using Hearthstone_Deck_Tracker;
 using Hearthstone_Deck_Tracker.Enums;
 using Hearthstone_Deck_Tracker.Utility.Logging;
@@ -213,6 +214,34 @@ namespace DeckHistoryPlugin
 
             // if neither source is in a valid state, quit
             throw new Exception("Used deck could not be detected");
+        }
+
+        public static Deck FromOpponent(FormatType fallbackFormat = FormatType.FT_WILD)
+        {
+
+            // Retrieve deck information
+            var stats = Hearthstone_Deck_Tracker.Core.Game.CurrentGameStats;
+            int heroId = 0;
+
+            if (HearthDb.Cards.All.ContainsKey(stats.OpponentHeroCardId))
+            {
+                heroId = HearthDb.Cards.All[stats.OpponentHeroCardId].DbfId;
+            } else
+            {
+                heroId = MapClassNameToHero(stats.OpponentHero);
+            }
+
+            return new Deck
+            {
+                HeroDbfId = heroId,
+                CardDbfIds = stats.OpponentCards
+                                  .Where(card => HearthDb.Cards.All.ContainsKey(card.Id))
+                                  .ToDictionary(
+                                      card => HearthDb.Cards.All[card.Id].DbfId,
+                                      card => card.Count
+                                  ),
+                Format = stats.Format.HasValue ? (FormatType)stats.Format : fallbackFormat
+            };
         }
     }
 }
